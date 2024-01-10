@@ -1,0 +1,98 @@
+﻿@model IEnumerable<Shop.Models.Article>
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+@if(!Model.Any())
+{
+    <h2>Your cart is empty</h2>
+}
+else
+{
+    <h2>Your cart</h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Barcode
+                </th>
+                <th>
+                    Photo
+                </th>
+                <th>
+                    Product name
+                </th>
+                <th>
+                    Price
+                </th>
+                <th>
+                    Weight
+                </th>
+                <th>
+                    Expiration date
+                </th>
+                <th>
+                    Country of origin
+                </th>
+                <th>
+                    Quantity
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BarCode)
+                    </td>
+                    <td>
+                        @if (item.FileName != null)
+                        {
+                            <img src="@Url.Content("~/upload/" + item.FileName)" width="70" height="70">
+                        }
+                        else
+                        {
+                            <img src="~/image/no_image.png" width="70" height="70">
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                        <text>€</text>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Weight)
+                        <text> kg</text>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ExpirationDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CountryOfOrigin)
+                    </td>
+                    <td>
+                        @ViewBag.ProductQuantities[item.Id]
+                    </td>
+                    <td width="200px">
+                        <a asp-controller="Cart" asp-action="AddMore" asp-route-id="@item.Id" class="btn btn-success">&#x2b;</a>
+                        <a asp-controller="Cart" asp-action="Decrease" asp-route-id="@item.Id" class="btn btn-info">&#x2212;</a>
+                        <a asp-controller="Cart" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">&#x2715;</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>Your cart value is: @ViewBag.CartValue &euro;</p>
+}
+

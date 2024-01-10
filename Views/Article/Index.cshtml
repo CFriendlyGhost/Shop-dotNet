@@ -1,0 +1,93 @@
+@model IEnumerable<Shop.Models.Article>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Products list.</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add new product</a>
+</p>
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                Barcode
+            </th>
+            <th>
+                Photo
+            </th>
+            <th>
+                Product name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Weight)
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Expiration date
+            </th>            
+            <th>
+                Country of origin
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)                      
+                </td>                               
+                <td>                               
+                    @Html.DisplayFor(modelItem => item.BarCode)                 
+                </td>
+                <td>
+                    @if (item.FileName != null)
+                    {
+                        <img src="@Url.Content(item.FileName)" width="70" height="70">
+                    }
+                    else{
+                        <img src="~/image/no_image.png" width="70" height="70">
+                    }
+                </td>
+                <td>                               
+                    @Html.DisplayFor(modelItem => item.ProductName)             
+                </td>                               
+                <td>                               
+                    @Html.DisplayFor(modelItem => item.Price)  
+                    <text>€</text>
+                </td>                               
+                <td>                               
+                    @Html.DisplayFor(modelItem => item.Weight)   
+                    <text> kg</text>
+                </td>   
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                </td>
+                <td>                               
+                    @Html.DisplayFor(modelItem => item.ExpirationDate)          
+                </td>                                 
+                <td>                               
+                    @Html.DisplayFor(modelItem => item.CountryOfOrigin)     
+                </td>                               
+                <td width="240px">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
