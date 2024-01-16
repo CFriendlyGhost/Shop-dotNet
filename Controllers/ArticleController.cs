@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using Shop.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Shop.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ArticleController : Controller
     {
         private readonly ShopDbContext _articleContext;

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Shop.DataContext;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace Shop
@@ -25,6 +26,9 @@ namespace Shop
             services.AddControllersWithViews();
             services.AddDbContextPool<ShopDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ShopCS")));
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ShopDbContext>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -38,11 +42,11 @@ namespace Shop
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -50,6 +54,7 @@ namespace Shop
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }
