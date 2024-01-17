@@ -31,7 +31,8 @@ namespace Shop
                 .AddEntityFrameworkStores<ShopDbContext>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
+            UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -48,6 +49,7 @@ namespace Shop
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            IdentityDataInitilizer.SeedData(userManager, roleManager);
 
             app.UseEndpoints(endpoints =>
             {

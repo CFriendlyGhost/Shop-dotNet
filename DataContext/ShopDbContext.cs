@@ -1,6 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Shop.Models;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Collections.Generic;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Linq;
+using System;
 
 namespace Shop.DataContext
 {
@@ -12,9 +18,25 @@ namespace Shop.DataContext
         }
         public DbSet<Article> Articles { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Cart> Carts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var dictionaryConverter = new ValueConverter<Dictionary<int, int>, string>(
+                v => JsonSerializer.Serialize(v, null),
+                v => JsonSerializer.Deserialize<Dictionary<int, int>>(v, null)
+            );
+
+            var dictionaryComparer = new ValueComparer<Dictionary<int, int>>(
+                (c1, c2) => c1.SequenceEqual(c2),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                c => new Dictionary<int, int>(c)
+            );
+
+            modelBuilder.Entity<Cart>()
+                .Property(e => e.Items)
+                .HasConversion(dictionaryConverter);
+
             modelBuilder.Entity<Article>()
                 .HasKey(a => a.Id);
 

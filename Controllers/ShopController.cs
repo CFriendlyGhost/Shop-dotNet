@@ -8,16 +8,20 @@ using Shop.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace Shop.Controllers
 {
     public class ShopController : Controller
     {
         private readonly ShopDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ShopController(ShopDbContext context)
+        public ShopController(ShopDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -42,8 +46,43 @@ namespace Shop.Controllers
 
         public IActionResult AddToCart(int id)
         {
+            ClaimsPrincipal claimsPrincipal = this.User;
+
+            if (claimsPrincipal.Identity.IsAuthenticated)
+            {
+                AddToCartForAuthenticatedUser(id);
+            }
+            else
+            {
+                AddToCartForGuestUser(id);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        private void AddToCartForAuthenticatedUser(int id)
+        {
+            string userId = _userManager.GetUserId(User);
+            Cart cartItems = _context.Carts.SingleOrDefault(c => c.UserId == userId);
+
+            if (cartItems == null)
+            {
+                cartItems = new Cart
+                {
+                    UserId = userId
+                };
+                _context.Carts.Add(cartItems);
+            }
+
+            UpdateCartItems(cartItems, id);
+            _context.SaveChanges();
+        }
+
+        private void AddToCartForGuestUser(int id)
+        {
             var cart = HttpContext.Request.Cookies["cart"];
             Cart cartItems;
+
             if (cart == null)
             {
                 cartItems = new Cart();
@@ -53,6 +92,16 @@ namespace Shop.Controllers
                 cartItems = Newtonsoft.Json.JsonConvert.DeserializeObject<Cart>(cart);
             }
 
+            UpdateCartItems(cartItems, id);
+
+            HttpContext.Response.Cookies.Append("cart", Newtonsoft.Json.JsonConvert.SerializeObject(cartItems), new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(7)
+            });
+        }
+
+        private void UpdateCartItems(Cart cartItems, int id)
+        {
             if (cartItems.Items.ContainsKey(id))
             {
                 cartItems.Items[id]++;
@@ -61,13 +110,6 @@ namespace Shop.Controllers
             {
                 cartItems.Items[id] = 1;
             }
-
-            HttpContext.Response.Cookies.Append("cart", Newtonsoft.Json.JsonConvert.SerializeObject(cartItems), new CookieOptions
-            {
-                Expires = DateTime.Now.AddDays(7)
-            });
-
-            return RedirectToAction(nameof(Index));
         }
     }
 }

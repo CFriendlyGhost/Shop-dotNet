@@ -5,6 +5,10 @@ using Shop.DataContext;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using System;
+using System.Security.Claims;
+using System.Collections.Generic;
 
 
 namespace Shop.Controllers
@@ -12,23 +16,39 @@ namespace Shop.Controllers
     public class CartController : Controller
     {
         private readonly ShopDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CartController(ShopDbContext context)
+        public CartController(ShopDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
-            var cart = Request.Cookies["cart"];
+            ClaimsPrincipal claimsPrincipal = this.User;
             Cart cartItems;
-            if (cart == null)
+
+            if (claimsPrincipal.Identity.IsAuthenticated)
             {
-                cartItems = new Cart();
+                string userId = _userManager.GetUserId(claimsPrincipal);
+                cartItems = _context.Carts
+                    .Where(c => c.UserId == userId)
+                    .FirstOrDefault();
+
+                cartItems ??= new Cart();
             }
             else
             {
-                cartItems = JsonConvert.DeserializeObject<Cart>(cart);
+                var cart = Request.Cookies["cart"];
+                if (cart == null)
+                {
+                    cartItems = new Cart();
+                }
+                else
+                {
+                    cartItems = JsonConvert.DeserializeObject<Cart>(cart);
+                }
             }
 
             var productsInCart = _context.Articles
