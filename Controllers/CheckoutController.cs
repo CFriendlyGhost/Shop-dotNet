@@ -37,41 +37,32 @@ namespace Shop.Controllers
                     .FirstOrDefault();
 
                 cartItems ??= new Cart();
+
+                var productsInCart = _context.Articles
+                    .Where(article => cartItems.Items.Keys.Contains(article.Id))
+                    .ToList();
+
+                var productQuantities = cartItems.Items;
+                ViewBag.ProductQuantities = productQuantities;
+
+                var cartValue = 0f;
+
+                foreach (var product in productsInCart)
+                {
+                    if (cartItems.Items.TryGetValue(product.Id, out int quantity))
+                    {
+                        cartValue += product.Price * quantity;
+                    }
+                }
+                ViewBag.CartValue = cartValue;
+                return View(productsInCart);
             }
             else
             {
-                var cart = Request.Cookies["cart"];
-                if (cart == null)
-                {
-                    cartItems = new Cart();
-                }
-                else
-                {
-                    cartItems = JsonConvert.DeserializeObject<Cart>(cart);
-                }
+                TempData["MustBeLoggedIn"] = "You must to be logged in to finish checkout!";
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
-
-            var productsInCart = _context.Articles
-                .Where(article => cartItems.Items.Keys.Contains(article.Id))
-                .ToList();
-
-            var productQuantities = cartItems.Items;
-            ViewBag.ProductQuantities = productQuantities;
-
-            var cartValue = 0f;
-
-            foreach (var product in productsInCart)
-            {
-                if (cartItems.Items.TryGetValue(product.Id, out int quantity))
-                {
-                    cartValue += product.Price * quantity;
-                }
-            }
-            ViewBag.CartValue = cartValue;
-
-            return View(productsInCart);
         }
-
         public async Task<IActionResult> CompleteCheckout()
         {
             ClaimsPrincipal claimsPrincipal = this.User;
@@ -82,19 +73,19 @@ namespace Shop.Controllers
                 cartItems = _context.Carts
                     .Where(c => c.UserId == userId)
                     .FirstOrDefault();
-
+/*
                 IdentityUser user = _context.Users.Find(userId);
 
                 if (user != null)
                 {
                     
 
-                    // Jeśli chcesz zobaczyć efekt w bazie danych, wywołaj SaveChanges
                     _context.SaveChanges();
-                }
+                }*/
                 cartItems.Items.Clear();
                 _context.Carts.Update(cartItems);
                 _context.SaveChanges();
+                
             }
             return RedirectToAction("Index", "Cart");
         }

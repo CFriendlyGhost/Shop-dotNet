@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<Shop.Models.Article>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
 @{
     ViewData["Title"] = "Index";
 }
@@ -101,11 +103,10 @@ else
                                     <span><strong>@ViewBag.CartValue &euro;</strong></span>
                                 </li>
                             </ul>
-
                             <form asp-controller="Checkout" asp-action="Index" method="post">
-                            <button class="btn btn-outline-success btn-lg btn-block" type="submit">Checkout</button>
+                                <button class="btn btn-outline-success btn-lg btn-block" type="submit">Checkout</button>
                             </form>
-                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
