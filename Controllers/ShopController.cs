@@ -74,7 +74,15 @@ namespace Shop.Controllers
                 _context.Carts.Add(cartItems);
             }
 
-            UpdateCartItems(cartItems, id);
+            if (cartItems.Items.ContainsKey(id))
+            {
+                cartItems.Items[id]++;
+            }
+            else
+            {
+                cartItems.Items[id] = 1;
+            }
+            _context.Carts.Update(cartItems);
             _context.SaveChanges();
         }
 
@@ -92,16 +100,6 @@ namespace Shop.Controllers
                 cartItems = Newtonsoft.Json.JsonConvert.DeserializeObject<Cart>(cart);
             }
 
-            UpdateCartItems(cartItems, id);
-
-            HttpContext.Response.Cookies.Append("cart", Newtonsoft.Json.JsonConvert.SerializeObject(cartItems), new CookieOptions
-            {
-                Expires = DateTime.Now.AddDays(7)
-            });
-        }
-
-        private void UpdateCartItems(Cart cartItems, int id)
-        {
             if (cartItems.Items.ContainsKey(id))
             {
                 cartItems.Items[id]++;
@@ -110,6 +108,11 @@ namespace Shop.Controllers
             {
                 cartItems.Items[id] = 1;
             }
+
+            HttpContext.Response.Cookies.Append("cart", Newtonsoft.Json.JsonConvert.SerializeObject(cartItems), new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(7)
+            });
         }
     }
 }

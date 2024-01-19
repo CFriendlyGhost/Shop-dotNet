@@ -36,15 +36,6 @@ else
                     Price
                 </th>
                 <th>
-                    Weight
-                </th>
-                <th>
-                    Expiration date
-                </th>
-                <th>
-                    Country of origin
-                </th>
-                <th>
                     Quantity
                 </th>
             </tr>
@@ -75,16 +66,6 @@ else
                     <td>
                         @Html.DisplayFor(modelItem => item.Price)
                         <text>€</text>
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Weight)
-                        <text> kg</text>
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ExpirationDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CountryOfOrigin)
                     </td>
                     <td>
                         @ViewBag.ProductQuantities[item.Id]

@@ -109,17 +109,32 @@ namespace Shop.Controllers
         [HttpGet]
         public async Task<IActionResult> AddMore(int id)
         {
-            var cart = Request.Cookies["cart"];
-            var cartItems = JsonConvert.DeserializeObject<Cart>(cart);
+            ClaimsPrincipal claimsPrincipal = this.User;
+            Cart cartItems;
+            if (claimsPrincipal.Identity.IsAuthenticated)
+            {
+                string userId = _userManager.GetUserId(claimsPrincipal);
+                cartItems = _context.Carts
+                    .Where(c => c.UserId == userId)
+                    .FirstOrDefault();
 
-            var productsInCart = _context.Articles
-                .Where(article => cartItems.Items.Keys.Contains(article.Id))
-                .ToList();
+                cartItems.Items[id]++;
+                _context.Carts.Update(cartItems);
+                _context.SaveChanges();
+            }
+            else
+            {
+                var cart = Request.Cookies["cart"];
+                cartItems = JsonConvert.DeserializeObject<Cart>(cart);
 
-            cartItems.Items[id]++;
+                var productsInCart = _context.Articles
+                    .Where(article => cartItems.Items.Keys.Contains(article.Id))
+                    .ToList();
 
-            var updatedCart = JsonConvert.SerializeObject(cartItems);
-            Response.Cookies.Append("cart", updatedCart);
+                cartItems.Items[id]++;
+                var updatedCart = JsonConvert.SerializeObject(cartItems);
+                Response.Cookies.Append("cart", updatedCart);
+            }
 
             return RedirectToAction("Index");
         }
@@ -127,25 +142,46 @@ namespace Shop.Controllers
         [HttpGet]
         public async Task<IActionResult> Decrease(int id)
         {
-            var cart = Request.Cookies["cart"];
-            var cartItems = JsonConvert.DeserializeObject<Cart>(cart);
-
-            var productsInCart = _context.Articles
-                .Where(article => cartItems.Items.Keys.Contains(article.Id))
-                .ToList();
-
-            if (cartItems.Items[id] == 1)
+            ClaimsPrincipal claimsPrincipal = this.User;
+            Cart cartItems;
+            if (claimsPrincipal.Identity.IsAuthenticated)
             {
-                cartItems.Items.Remove(id);
-            }
+                string userId = _userManager.GetUserId(claimsPrincipal);
+                cartItems = _context.Carts
+                    .Where(c => c.UserId == userId)
+                    .FirstOrDefault();
 
+                if (cartItems.Items[id] == 1)
+                {
+                    cartItems.Items.Remove(id);
+                }
+                else
+                {
+                    cartItems.Items[id]--;
+                }
+                _context.Carts.Update(cartItems);
+                _context.SaveChanges();
+            }
             else
             {
-                cartItems.Items[id]--;
-            }
+                var cart = Request.Cookies["cart"];
+                cartItems = JsonConvert.DeserializeObject<Cart>(cart);
 
-            var updatedCart = JsonConvert.SerializeObject(cartItems);
-            Response.Cookies.Append("cart", updatedCart);
+                var productsInCart = _context.Articles
+                    .Where(article => cartItems.Items.Keys.Contains(article.Id))
+                    .ToList();
+
+                if (cartItems.Items[id] == 1)
+                {
+                    cartItems.Items.Remove(id);
+                }
+                else
+                {
+                    cartItems.Items[id]--;
+                }
+                var updatedCart = JsonConvert.SerializeObject(cartItems);
+                Response.Cookies.Append("cart", updatedCart);
+            }
 
             return RedirectToAction("Index");
         }
@@ -153,17 +189,32 @@ namespace Shop.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var cart = Request.Cookies["cart"];
-            var cartItems = JsonConvert.DeserializeObject<Cart>(cart);
+            ClaimsPrincipal claimsPrincipal = this.User;
+            Cart cartItems;
+            if (claimsPrincipal.Identity.IsAuthenticated)
+            {
+                string userId = _userManager.GetUserId(claimsPrincipal);
+                cartItems = _context.Carts
+                    .Where(c => c.UserId == userId)
+                    .FirstOrDefault();
 
-            var productsInCart = _context.Articles
-                .Where(article => cartItems.Items.Keys.Contains(article.Id))
-                .ToList();
+                cartItems.Items.Remove(id);
+                _context.Carts.Update(cartItems);
+                _context.SaveChanges();
+            }
+            else
+            {
+                var cart = Request.Cookies["cart"];
+                cartItems = JsonConvert.DeserializeObject<Cart>(cart);
 
-            cartItems.Items.Remove(id);
+                var productsInCart = _context.Articles
+                    .Where(article => cartItems.Items.Keys.Contains(article.Id))
+                    .ToList();
 
-            var updatedCart = JsonConvert.SerializeObject(cartItems);
-            Response.Cookies.Append("cart", updatedCart);
+                cartItems.Items.Remove(id);
+                var updatedCart = JsonConvert.SerializeObject(cartItems);
+                Response.Cookies.Append("cart", updatedCart);
+            }
 
             return RedirectToAction("Index");
         }

@@ -30,16 +30,7 @@
                 @Html.DisplayNameFor(model => model.Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Weight)
-            </th>
-            <th>
                 Category
-            </th>
-            <th>
-                Expiration date
-            </th>            
-            <th>
-                Country of origin
             </th>
         </tr>
     </thead>
@@ -69,19 +60,10 @@
                     @Html.DisplayFor(modelItem => item.Price)  
                     <text>€</text>
                 </td>                               
-                <td>                               
-                    @Html.DisplayFor(modelItem => item.Weight)   
-                    <text> kg</text>
-                </td>   
+
                 <td>
                     @Html.DisplayFor(modelItem => item.Category.CategoryName)
-                </td>
-                <td>                               
-                    @Html.DisplayFor(modelItem => item.ExpirationDate)          
-                </td>                                 
-                <td>                               
-                    @Html.DisplayFor(modelItem => item.CountryOfOrigin)     
-                </td>                               
+                </td>                           
                 <td width="240px">
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>

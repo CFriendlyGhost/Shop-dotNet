@@ -22,13 +22,6 @@ namespace Shop.Models
         [NotMapped]
         public IFormFile File { get; set; }
         public string FileName { get; set; }
-        public string CountryOfOrigin { get; set; }
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
-
-        public float Weight { get; set; }
-        [DataType(DataType.DateTime)]
-        [Required]
-        public DateTime ExpirationDate { get; set; }
         public int CategoryId {  get; set; }
         public Category Category { get; set; } 
     }

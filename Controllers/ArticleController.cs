@@ -78,7 +78,7 @@ namespace Shop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id", "BarCode", "ProductName", "Price", "File", "FileName", "CountryOfOrigin", "Weight", "ExpirationDate", "CategoryId")] Article article)
+        public async Task<IActionResult> Create([Bind("Id", "BarCode", "ProductName", "Price", "File", "FileName", "CategoryId")] Article article)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace Shop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id", "BarCode", "ProductName", "Price", "CountryOfOrigin", "Weight", "ExpirationDate", "CategoryId")] Article article)
+        public async Task<IActionResult> Edit(int id, [Bind("Id", "BarCode", "ProductName", "Price", "CategoryId")] Article article)
         {
             if (id != article.Id)
             {

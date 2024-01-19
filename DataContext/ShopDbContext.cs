@@ -63,19 +63,6 @@ namespace Shop.DataContext
                 .IsRequired()
                 .HasPrecision(18, 2);
 
-            modelBuilder.Entity<Article>()
-                .Property(a => a.CountryOfOrigin)
-                .HasMaxLength(50);
-
-            modelBuilder.Entity<Article>()
-                .Property(a => a.Weight)
-                .IsRequired()
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<Article>()
-                .Property(a => a.ExpirationDate)
-                .IsRequired();
-
             modelBuilder.Entity<Category>()
                 .Property(c => c.CategoryName)
                 .IsRequired()
