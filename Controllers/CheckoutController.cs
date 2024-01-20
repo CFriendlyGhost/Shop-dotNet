@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 
 namespace Shop.Controllers
@@ -45,16 +46,7 @@ namespace Shop.Controllers
                 var productQuantities = cartItems.Items;
                 ViewBag.ProductQuantities = productQuantities;
 
-                var cartValue = 0f;
-
-                foreach (var product in productsInCart)
-                {
-                    if (cartItems.Items.TryGetValue(product.Id, out int quantity))
-                    {
-                        cartValue += product.Price * quantity;
-                    }
-                }
-                ViewBag.CartValue = cartValue;
+                ViewBag.CartValue = sumCartValue(productsInCart, cartItems);
                 return View(productsInCart);
             }
             else
@@ -69,25 +61,38 @@ namespace Shop.Controllers
             Cart cartItems;
             if (claimsPrincipal.Identity.IsAuthenticated)
             {
-                string userId = _userManager.GetUserId(claimsPrincipal);
-                cartItems = _context.Carts
-                    .Where(c => c.UserId == userId)
-                    .FirstOrDefault();
-/*
-                IdentityUser user = _context.Users.Find(userId);
+                string userId = _userManager.GetUserId(claimsPrincipal);                
+                var discount = _context.Discounts.Where(c => c.CustomerId == userId).FirstOrDefault();
+                cartItems = _context.Carts.Where(c => c.UserId == userId).FirstOrDefault();
+                var productsInCart = _context.Articles
+                    .Where(article => cartItems.Items.Keys.Contains(article.Id))
+                    .ToList();
 
-                if (user != null)
-                {
-                    
+                if (discount == null) {
+                    discount = new Discount { CustomerId = userId, points = (int)sumCartValue(productsInCart, cartItems)};
+                    _context.Discounts.Add(discount);
+                }
 
-                    _context.SaveChanges();
-                }*/
                 cartItems.Items.Clear();
                 _context.Carts.Update(cartItems);
                 _context.SaveChanges();
                 
             }
             return RedirectToAction("Index", "Cart");
+        }
+
+        public float sumCartValue(List<Article> productsInCart, Cart cartItems)
+        {
+            var cartValue = 0f;
+
+            foreach (var product in productsInCart)
+            {
+                if (cartItems.Items.TryGetValue(product.Id, out int quantity))
+                {
+                    cartValue += product.Price * quantity;
+                }
+            }
+            return cartValue;
         }
     }
 }
