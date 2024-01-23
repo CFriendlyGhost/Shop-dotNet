@@ -11,6 +11,11 @@
     <meta name="author" content="">
     <link href="../../../../dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="form-validation.css" rel="stylesheet">
+    <script>
+        function updatePaymentMethod(method) {
+            document.getElementById('PaymentMethod').value = method;
+        }
+    </script>
 </head>
 
 <body class="bg-light">
@@ -52,9 +57,9 @@
                     <li class="list-group-item d-flex justify-content-between bg-light">
                         <div class="text-success">
                             <h6 class="my-0">Promo code</h6>
-                            <small>EXAMPLECODE</small>
+                            <small>No code</small>
                         </div>
-                        <span class="text-success">-$5</span>
+                        <span class="text-success">-$0</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Total</span>
@@ -73,87 +78,84 @@
             </div>
             <div class="col-md-8 order-md-1">
                 <h4 class="mb-3">Billing address</h4>
-                <form class="needs-validation" novalidate>
+                <form asp-controller="Checkout" asp-action="ShowConfirmation" method="post">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="firstName">First name</label>
-                            <input type="text" class="form-control" id="firstName" placeholder="" value="" >
+                            <label for="FirstName">First name</label>
+                            <input type="text" class="form-control" id="FirstName" name="FirstName" placeholder="" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="lastName">Last name</label>
-                            <input type="text" class="form-control" id="lastName" placeholder="" value="" >
+                            <label for="LastName">Last name</label>
+                            <input type="text" class="form-control" id="LastName" name="LastName" placeholder="" required>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="address">Address</label>
-                        <input type="text" class="form-control" id="address" placeholder="1234 Main St" >
+                        <label for="Address">Address</label>
+                        <input type="text" class="form-control" id="Address" name="Address" placeholder="Spacerowa 123" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
-                        <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
+                        <label for="Address2">Address 2 <span class="text-muted">(Optional)</span></label>
+                        <input type="text" class="form-control" id="Address2" placeholder="Apartment or suite">
                     </div>
 
                     <div class="row">
                         <div class="col-md-5 mb-3">
-                            <label for="country">Country</label>
-                            <select class="custom-select d-block w-100" id="country" >
-                                <option value="">Choose...</option>
-                                <option>Poland</option>
-                            </select>
+                            <label for="City">City</label>
+                            <input type="text" class="form-control" id="City" name="City" placeholder="Wrocław" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="state">State</label>
-                            <select class="custom-select d-block w-100" id="state" >
+                            <label for="State">State</label>
+                            <select class="custom-select d-block w-100" id="State" name="State">
                                 <option value="">Choose...</option>
-                                dolnośląskie,
-                                <option>kujawsko-pomorskie</option>
-                                <option>lubelskie</option>
-                                <option>lubuskie</option>
-                                <option>łódzkie</option>
-                                <option>małopolskie</option>
-                                <option>mazowieckie</option>
-                                <option>opolskie</option>
-                                <option>podkarpackie</option>
-                                <option> podlaskie</option>
-                                <option> pomorskie</option>
-                                <option> śląskie</option>
-                                <option> świętokrzyskie</option>
-                                <option> warmińsko-mazurski</option>
-                                <option> wielkopolskie</option>
-                                <option> zachodniopomorskie</option>
+                                <option value="dolnośląskie">dolnośląskie</option>
+                                <option value="kujawsko-pomorskie">kujawsko-pomorskie</option>
+                                <option value="lubelskie">lubelskie</option>
+                                <option value="lubuskie">lubuskie</option>
+                                <option value="łódzkie">łódzkie</option>
+                                <option value="małopolskie">małopolskie</option>
+                                <option value="mazowieckie">mazowieckie</option>
+                                <option value="opolskie">opolskie</option>
+                                <option value="podkarpackie">podkarpackie</option>
+                                <option value="podlaskie">podlaskie</option>
+                                <option value="pomorskie">pomorskie</option>
+                                <option value="śląskie">śląskie</option>
+                                <option value="świętokrzyskie">świętokrzyskie</option>
+                                <option value="warmińsko-mazurski">warmińsko-mazurski</option>
+                                <option value="wielkopolskie">wielkopolskie</option>
+                                <option value="zachodniopomorskie">zachodniopomorskie</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="zip">Zip</label>
-                            <input type="text" class="form-control" id="zip" placeholder="" >
+                            <label for="Zip">Zip</label>
+                            <input type="text" class="form-control" id="Zip" name="Zip" placeholder="">
                         </div>
                     </div>
                     <hr class="mb-4">
                     <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="same-address">
-                        <label class="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
+                        <input type="checkbox" class="custom-control-input" id="SameAddress">
+                        <label class="custom-control-label" for="SameAddress">Shipping address is the same as my billing address</label>
                     </div>
                     <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="save-info">
-                        <label class="custom-control-label" for="save-info">Save this information for next time</label>
+                        <input type="checkbox" class="custom-control-input" id="SaveInfo">
+                        <label class="custom-control-label" for="SaveInfo">Save this information for next time</label>
                     </div>
                     <hr class="mb-4">
 
                     <h4 class="mb-3">Payment</h4>
-
                     <div class="d-block my-3">
+                        <input type="hidden" id="PaymentMethod" name="PaymentMethod" value="CreditCard">
                         <div class="custom-control custom-radio">
-                            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked >
+                            <input id="credit" name="PaymentMethod" type="radio" class="custom-control-input" checked onchange="updatePaymentMethod('CreditCard')">
                             <label class="custom-control-label" for="credit">Credit card</label>
                         </div>
                         <div class="custom-control custom-radio">
-                            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" >
+                            <input id="debit" name="PaymentMethod" type="radio" class="custom-control-input" onchange="updatePaymentMethod('DebitCard')">
                             <label class="custom-control-label" for="debit">Debit card</label>
                         </div>
                         <div class="custom-control custom-radio">
-                            <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" >
+                            <input id="paypal" name="PaymentMethod" type="radio" class="custom-control-input" onchange="updatePaymentMethod('PayPal')">
                             <label class="custom-control-label" for="paypal">Paypal</label>
                         </div>
                     </div>
@@ -179,12 +181,12 @@
                         </div>
                     </div>
                     <hr class="mb-4">
-                    
 
-                </form>
-                <form asp-controller="Checkout" asp-action="CompleteCheckout" method="post">
                     <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
                 </form>
+@*                 <form asp-controller="Checkout" asp-action="ShowConfirmation" method="post">
+                    
+                </form> *@
             </div>
         </div>
 </body>
