@@ -1,15 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Shop.DataContext;
 using System.Linq;
 using Shop.Models;
 using System.Security.Claims;
-using System.IO;
 using System.Threading.Tasks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 
@@ -55,6 +52,7 @@ namespace Shop.Controllers
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
         }
+
         public async Task<IActionResult> CompleteCheckout()
         {
             ClaimsPrincipal claimsPrincipal = this.User;
@@ -79,6 +77,13 @@ namespace Shop.Controllers
                 
             }
             return RedirectToAction("Index", "Cart");
+        }
+
+        [HttpPost]
+        public IActionResult ShowConfirmation(CheckoutDetails checkoutDetails)
+        {
+            CompleteCheckout();
+            return View(checkoutDetails);
         }
 
         public float sumCartValue(List<Article> productsInCart, Cart cartItems)
