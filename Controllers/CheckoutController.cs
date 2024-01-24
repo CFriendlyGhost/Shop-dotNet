@@ -27,6 +27,11 @@ namespace Shop.Controllers
             ClaimsPrincipal claimsPrincipal = this.User;
             Cart cartItems;
 
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             if (claimsPrincipal.Identity.IsAuthenticated)
             {
                 string userId = _userManager.GetUserId(claimsPrincipal);
@@ -57,6 +62,12 @@ namespace Shop.Controllers
         {
             ClaimsPrincipal claimsPrincipal = this.User;
             Cart cartItems;
+
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             if (claimsPrincipal.Identity.IsAuthenticated)
             {
                 string userId = _userManager.GetUserId(claimsPrincipal);                
