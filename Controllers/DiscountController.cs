@@ -32,7 +32,9 @@ namespace Shop.Controllers
 			return View();
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 		public async Task<IActionResult> DiscountChoose(int pointsValue)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 		{
 			ClaimsPrincipal claimsPrincipal = this.User;
 

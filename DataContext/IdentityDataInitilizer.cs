@@ -30,7 +30,7 @@ namespace Shop.DataContext
             {
                 IdentityUser user = new IdentityUser
                 {
-                    UserName = name, 
+                    UserName = name,
                     Email = name
                 };
                 IdentityResult result = userManager.CreateAsync(user, password).Result;

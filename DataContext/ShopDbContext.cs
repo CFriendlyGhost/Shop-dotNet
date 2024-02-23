@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Shop.Models;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Collections.Generic;
-using System.Text.Json;
+using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq;
 using System;
@@ -25,8 +25,8 @@ namespace Shop.DataContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var dictionaryConverter = new ValueConverter<Dictionary<int, int>, string>(
-                v => JsonSerializer.Serialize(v, null),
-                v => JsonSerializer.Deserialize<Dictionary<int, int>>(v, null)
+                v => JsonConvert.SerializeObject(v),
+                v => JsonConvert.DeserializeObject<Dictionary<int, int>>(v)
             );
 
             var dictionaryComparer = new ValueComparer<Dictionary<int, int>>(

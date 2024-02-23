@@ -63,10 +63,12 @@ namespace Shop.Controllers
         // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+#pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
             if (id == null)
             {
                 return NotFound();
             }
+#pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
 
             var category = await _context.Categories.FindAsync(id);
             if (category == null)

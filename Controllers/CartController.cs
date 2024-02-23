@@ -24,7 +24,9 @@ namespace Shop.Controllers
             _userManager = userManager;
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<IActionResult> Index()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             ClaimsPrincipal claimsPrincipal = this.User;
             Cart cartItems;
@@ -77,7 +79,9 @@ namespace Shop.Controllers
             return View(productsInCart);
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<IActionResult> IndexJs()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             var cart = Request.Cookies["cart"];
             Cart cartItems;
@@ -112,7 +116,9 @@ namespace Shop.Controllers
         }
 
         [HttpGet]
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<IActionResult> AddMore(int id)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             ClaimsPrincipal claimsPrincipal = this.User;
             Cart cartItems;
@@ -145,7 +151,9 @@ namespace Shop.Controllers
         }
 
         [HttpGet]
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<IActionResult> Decrease(int id)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             ClaimsPrincipal claimsPrincipal = this.User;
             Cart cartItems;
@@ -192,7 +200,9 @@ namespace Shop.Controllers
         }
 
         [HttpGet]
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<IActionResult> Delete(int id)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             ClaimsPrincipal claimsPrincipal = this.User;
             Cart cartItems;

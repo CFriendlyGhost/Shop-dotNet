@@ -175,9 +175,6 @@ namespace Shop.Migrations
                     ProductName = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     Price = table.Column<float>(type: "float(18)", precision: 18, scale: 2, nullable: false),
                     FileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CountryOfOrigin = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Weight = table.Column<float>(type: "float(18)", precision: 18, scale: 2, nullable: false),
-                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

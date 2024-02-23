@@ -8,6 +8,7 @@ using Shop.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Shop.Services;
 
 namespace Shop.Controllers
 {
@@ -15,10 +16,12 @@ namespace Shop.Controllers
     public class ArticleController : Controller
     {
         private readonly ShopDbContext _articleContext;
+        private readonly IImageService _imageService;
 
-        public ArticleController(ShopDbContext context)
+        public ArticleController(ShopDbContext context, IImageService imageService)
         {
             _articleContext = context;
+            _imageService = imageService;   
         }
 
         public async Task<IActionResult> Index()
@@ -86,19 +89,7 @@ namespace Shop.Controllers
                 {
                     if(article.File != null)
                     {
-                        string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/upload");
-                        if (!Directory.Exists(path))
-                            Directory.CreateDirectory(path);
-
-                        string fileName = $"{Guid.NewGuid()}{Path.GetExtension(article.File.FileName)}";
-                        string filePath = Path.Combine(path, fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await article.File.CopyToAsync(stream);
-                        }
-
-                        article.FileName = fileName;
+                        _imageService.UploadImageToAzureStorage(article.File);
                     }
 
                     _articleContext.Add(article);
