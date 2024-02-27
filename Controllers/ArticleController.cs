@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Shop.Services;
+using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace Shop.Controllers
 {
@@ -30,17 +31,6 @@ namespace Shop.Controllers
                 .Include(a => a.Category);
 
             var articlesWithImagePaths = await articlesDbContext.ToListAsync();
-
-
-            foreach (var article in articlesWithImagePaths)
-            {
-                if(article.FileName != null)
-                {
-                    string path = "~/upload";
-                    article.FileName = Path.Combine(path, article.FileName);
-                }
-            }
-
 
             return View(articlesWithImagePaths);
         }
@@ -89,7 +79,9 @@ namespace Shop.Controllers
                 {
                     if(article.File != null)
                     {
-                        _imageService.UploadImageToAzureStorage(article.File);
+                        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(article.FileName)}";
+                        var fileUrl = await _imageService.UploadImageToAzureStorage(article.File, fileName);
+                        article.FileName = fileUrl;
                     }
 
                     _articleContext.Add(article);
@@ -191,8 +183,7 @@ namespace Shop.Controllers
             var article = await _articleContext.Articles.FindAsync(id);
             if (article.FileName != null)
             {
-                var path = Path.GetFullPath("wwwroot");
-                System.IO.File.Delete(Path.Combine(path, "upload", article.FileName));
+                await _imageService.DeleteImage(article.FileName);
             }
             _articleContext.Articles.Remove(article);
             await _articleContext.SaveChangesAsync();

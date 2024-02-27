@@ -5,15 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Shop.DataContext;
 using Shop.Options;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 using System;
-using Microsoft.Extensions.Azure;
-using Azure.Storage.Queues;
-using Azure.Storage.Blobs;
-using Azure.Core.Extensions;
 using Shop.Services;
+using Azure.Identity;
+using Azure.Core;
+using Azure.Storage.Blobs;
+using Microsoft.Extensions.Azure;
 
 
 namespace Shop
@@ -25,7 +26,6 @@ namespace Shop
         {
             Configuration = configuration;
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
-            AzureOptions = Configuration.GetSection("storage1").Get<AzureOptions>();
         }
 
         public IConfiguration Configuration { get; }
@@ -33,17 +33,25 @@ namespace Shop
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IImageService, ImageService>();
-            services.AddSingleton(AzureOptions);
+            services.AddControllersWithViews();
 
-            services.AddAzureClients(builder =>
+            var keyVaultValue = Configuration["KeyVault"];
+            var client = new SecretClient(new Uri(keyVaultValue), new DefaultAzureCredential());
+            KeyVaultSecret secret = client.GetSecret("ConnectionStrings--ShopCS");
+
+            string connectionDbString = secret.Value;
+
+            services.AddDbContext<ShopDbContext>(options =>
+                options.UseSqlServer(connectionDbString));
+
+            services.AddSingleton(x =>
             {
-                builder.AddBlobServiceClient(AzureOptions.ResourceId);
-                builder.AddQueueServiceClient(AzureOptions.ResourceId);
+                KeyVaultSecret secret = client.GetSecret("BlobStorage--connection");
+                var blobContainerClient = new BlobContainerClient(secret.Value, "shopimages");
+                return blobContainerClient;
             });
 
-            services.AddControllersWithViews();
-            services.AddDbContextPool<ShopDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("ShopCS")));
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ShopDbContext>();

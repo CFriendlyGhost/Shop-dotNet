@@ -28,11 +28,7 @@ else
                                         <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
                                             @if (item.FileName != null)
                                             {
-                                            <img src="@Url.Content("~/upload/" + item.FileName)" class="img-thumbnail"  />
-                                            }
-                                            else
-                                            {
-                                                <img src="~/image/no_image.png" width="120" height="120" />
+                                            <img src=@item.FileName class="img-thumbnail"  />
                                             }
                                             <a href="#!">
                                                 <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>

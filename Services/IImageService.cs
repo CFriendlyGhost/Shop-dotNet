@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Shop.Services
 {
     public interface IImageService
     {
-        void UploadImageToAzureStorage(IFormFile file);
+        Task<string> UploadImageToAzureStorage(IFormFile file, string fileName);
+        Task DeleteImage(string fileRoute);
     }
 }

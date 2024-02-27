@@ -38,11 +38,7 @@
                 <td>
                     @if (item.FileName != null)
                     {
-                        <img src="@Url.Content("~/upload/" + item.FileName)" width="70" height="70">
-                    }
-                    else
-                    {
-                        <img src="~/image/no_image.png" width="70" height="70">
+                        <img src=@item.FileName width="70" height="70">
                     }
                 </td>
                 <td>
